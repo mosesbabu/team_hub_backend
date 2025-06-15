@@ -38,9 +38,9 @@ app.use(
     name: "session",
     keys: [config.SESSION_SECRET],
     maxAge: 24 * 60 * 60 * 1000,
-    secure: config.NODE_ENV === "production",
+    secure: true, // Must be true for sameSite: "none"
     httpOnly: true,
-    sameSite: "none",
+    sameSite: "none", // Required for cross-origin cookies
   })
 );
 
