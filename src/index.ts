@@ -41,6 +41,8 @@ app.use(
     secure: true, // Must be true for sameSite: "none"
     httpOnly: true,
     sameSite: "none", // Required for cross-origin cookies
+    domain: undefined,
+
   })
 );
 
