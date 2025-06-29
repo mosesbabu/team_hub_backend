@@ -29,17 +29,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set("trust proxy", 1); // ✅ Required when behind a proxy (like Render)
 
-
-
-const isProd = process.env.NODE_ENV === "production";
-
 app.use(
   session({
     name: "session",
     keys: [config.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000, 
-    secure: isProd,              
-    sameSite: isProd ? "none" : "lax", 
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    secure: true,         // ✅ MUST be true in production (HTTPS)
+    sameSite: "none",     // ✅ Required for cross-origin cookies
   })
 );
 
