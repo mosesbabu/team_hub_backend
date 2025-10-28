@@ -63,22 +63,43 @@ export const loginController = asyncHandler(
           console.log("Login successful - user:", user);
           console.log("Login successful - session ID:", req.session?.id);
           console.log("Login successful - session data:", req.session);
-          console.log("Login successful - response headers:", res.getHeaders());
+          
+          // Generate a unique session ID if not present
+          if (!req.session?.id) {
+            req.session.id = 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            console.log("Generated new session ID:", req.session.id);
+          }
 
-          // Manually set the session cookie to ensure it's sent
-          if (req.session?.id) {
-            res.cookie('session', req.session.id, {
+          // Force session to be saved
+          req.session.save((err: any) => {
+            if (err) {
+              console.error("Session save error:", err);
+              return next(err);
+            }
+
+            console.log("Session saved - session ID:", req.session?.id);
+            console.log("Session saved - session data:", req.session);
+            
+            // Set the session cookie manually with proper configuration
+            const sessionCookieName = 'session';
+            const sessionCookieValue = req.session?.id;
+            
+            res.cookie(sessionCookieName, sessionCookieValue, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
               maxAge: 24 * 60 * 60 * 1000, // 24 hours
-              path: '/'
+              path: '/',
+              domain: undefined // Let browser handle domain
             });
-          }
 
-          return res.status(HTTPSTATUS.OK).json({
-            message: "Logged in successfully",
-            user,
+            console.log("Set cookie:", sessionCookieName, "=", sessionCookieValue);
+            console.log("Login successful - response headers:", res.getHeaders());
+
+            return res.status(HTTPSTATUS.OK).json({
+              message: "Logged in successfully",
+              user,
+            });
           });
         });
       }

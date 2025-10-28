@@ -112,22 +112,37 @@ app.get(
   })
 );
 
-// Debug endpoint to test session
+// Debug endpoint to test session creation
 app.get('/debug/session', (req: any, res: any) => {
-  console.log('=== DEBUG SESSION ENDPOINT ===');
+  console.log('=== Debug Session Endpoint ===');
   console.log('Session ID:', req.session?.id);
   console.log('Session data:', req.session);
   console.log('User:', req.user);
-  console.log('Cookies:', req.headers.cookie);
-  console.log('================================');
+  console.log('Headers:', req.headers);
+  
+  // Create a test session
+  if (!req.session?.id) {
+    req.session.id = 'debug-session-' + Date.now();
+    req.session.testData = 'test-value';
+    console.log('Created debug session:', req.session.id);
+  }
+  
+  res.cookie('debug-session', req.session.id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000,
+    path: '/'
+  });
   
   res.json({
     sessionId: req.session?.id,
     sessionData: req.session,
     user: req.user,
-    cookies: req.headers.cookie
+    headers: req.headers
   });
 });
+
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes);
