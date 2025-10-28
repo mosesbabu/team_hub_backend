@@ -64,6 +64,7 @@ passport.use(
 );
 
 passport.serializeUser((user: any, done) => {
+  console.log("Passport serializeUser - user ID:", user._id);
   // Store only the user ID in the session
   done(null, user._id);
 });
@@ -74,6 +75,9 @@ passport.deserializeUser(async (id: string, done) => {
     // Fetch the user from the database using the stored ID
     const user = await UserModel.findById(id).select('-password');
     console.log("Passport deserializeUser - user found:", user ? "Yes" : "No");
+    if (user) {
+      console.log("Passport deserializeUser - user email:", user.email);
+    }
     done(null, user);
   } catch (error) {
     console.log("Passport deserializeUser - error:", error);

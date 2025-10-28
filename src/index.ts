@@ -27,6 +27,11 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+// Trust proxy for production (required for Render.com)
+if (config.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 // CORS should be configured before session middleware
 app.use(
   cors({
@@ -35,31 +40,32 @@ app.use(
   })
 );
 
-app.use(
-  session({
-    name: "session",
-    keys: [config.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: config.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "lax",
-  })
-);
-//for production use
-/*
-app.set("trust proxy", 1); // ✅ Required when behind a proxy (like Render)
-
-app.use(
-  session({
-    name: "session",
-    keys: [config.SESSION_SECRET],
-    maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: true,         // ✅ MUST be true in production (HTTPS)
-    sameSite: "none",     // ✅ Required for cross-origin cookies
-  })
-);
-*/
+// Session configuration - different for production vs development
+if (config.NODE_ENV === "production") {
+  // Production session config for Render.com
+  app.use(
+    session({
+      name: "session",
+      keys: [config.SESSION_SECRET],
+      maxAge: 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,         // ✅ MUST be true in production (HTTPS)
+      sameSite: "none",     // ✅ Required for cross-origin cookies
+    })
+  );
+} else {
+  // Development session config
+  app.use(
+    session({
+      name: "session",
+      keys: [config.SESSION_SECRET],
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: false,
+      httpOnly: true,
+      sameSite: "lax",
+    })
+  );
+}
 app.use(passport.initialize());
 app.use(passport.session());
 
