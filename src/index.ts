@@ -60,6 +60,8 @@ if (config.NODE_ENV === "production") {
       httpOnly: true,
       secure: true,         // ✅ MUST be true in production (HTTPS)
       sameSite: "none",     // ✅ Required for cross-origin cookies (Vercel -> Render)
+      domain: undefined,    // ✅ Let browser handle domain
+      path: "/",            // ✅ Set explicit path
     })
   );
 } else {
@@ -73,6 +75,7 @@ if (config.NODE_ENV === "production") {
       secure: false,
       httpOnly: true,
       sameSite: "lax",
+      path: "/",
     })
   );
 }

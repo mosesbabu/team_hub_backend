@@ -65,6 +65,17 @@ export const loginController = asyncHandler(
           console.log("Login successful - session data:", req.session);
           console.log("Login successful - response headers:", res.getHeaders());
 
+          // Manually set the session cookie to ensure it's sent
+          if (req.session?.id) {
+            res.cookie('session', req.session.id, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+              maxAge: 24 * 60 * 60 * 1000, // 24 hours
+              path: '/'
+            });
+          }
+
           return res.status(HTTPSTATUS.OK).json({
             message: "Logged in successfully",
             user,
