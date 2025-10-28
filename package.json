@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^22.10.2",
     "bcrypt": "^5.1.1",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
@@ -35,7 +36,6 @@
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^22.10.2",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/passport-local": "^1.0.38",
