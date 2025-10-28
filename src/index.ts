@@ -52,7 +52,7 @@ if (config.NODE_ENV === "production") {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: true,         // ✅ MUST be true in production (HTTPS)
-      sameSite: "none",     // ✅ Required for cross-origin cookies
+      sameSite: "lax",     // Try "lax" instead of "none" first
     })
   );
 } else {
@@ -101,6 +101,23 @@ app.get(
     });
   })
 );
+
+// Debug endpoint to test session
+app.get('/debug/session', (req, res) => {
+  console.log('=== DEBUG SESSION ENDPOINT ===');
+  console.log('Session ID:', req.session?.id);
+  console.log('Session data:', req.session);
+  console.log('User:', req.user);
+  console.log('Cookies:', req.headers.cookie);
+  console.log('================================');
+  
+  res.json({
+    sessionId: req.session?.id,
+    sessionData: req.session,
+    user: req.user,
+    cookies: req.headers.cookie
+  });
+});
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes);
