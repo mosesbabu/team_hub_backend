@@ -21,7 +21,11 @@ import { HTTPSTATUS } from "../config/http.config";
 
 export const createProjectController = asyncHandler(
   async (req: Request, res: Response) => {
-    const body = createProjectSchema.parse(req.body);
+    const body = createProjectSchema.parse(req.body) as { 
+      emoji?: string; 
+      name: string; 
+      description?: string; 
+    };
     const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
     const userId = req.user?._id;
@@ -117,7 +121,11 @@ export const updateProjectController = asyncHandler(
     const projectId = projectIdSchema.parse(req.params.id);
     const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
-    const body = updateProjectSchema.parse(req.body);
+    const body = updateProjectSchema.parse(req.body) as { 
+      emoji?: string; 
+      name: string; 
+      description?: string; 
+    };
 
     const { role } = await getMemberRoleInWorkspace(userId, workspaceId);
     roleGuard(role, [Permissions.EDIT_PROJECT]);

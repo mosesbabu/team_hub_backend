@@ -24,7 +24,10 @@ import { updateWorkspaceSchema } from "../validation/workspace.validation";
 
 export const createWorkspaceController = asyncHandler(
   async (req: Request, res: Response) => {
-    const body = createWorkspaceSchema.parse(req.body);
+    const body = createWorkspaceSchema.parse(req.body) as { 
+      name: string; 
+      description?: string; 
+    };
 
     const userId = req.user?._id;
     const { workspace } = await createWorkspaceService(userId, body);
@@ -128,7 +131,11 @@ export const changeWorkspaceMemberRoleController = asyncHandler(
 export const updateWorkspaceByIdController = asyncHandler(
   async (req: Request, res: Response) => {
     const workspaceId = workspaceIdSchema.parse(req.params.id);
-    const { name, description } = updateWorkspaceSchema.parse(req.body);
+    const body = updateWorkspaceSchema.parse(req.body) as { 
+      name: string; 
+      description?: string; 
+    };
+    const { name, description } = body;
 
     const userId = req.user?._id;
 

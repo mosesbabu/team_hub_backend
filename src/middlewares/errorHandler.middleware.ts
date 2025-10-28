@@ -17,10 +17,10 @@ const formatZodError = (res: Response, error: z.ZodError) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (
-  error,
-  req,
-  res,
-  next
+  error: any,
+  req: any,
+  res: any,
+  next: any
 ): any => {
   console.error(`Error Occured on PATH: ${req.path} `, error);
 

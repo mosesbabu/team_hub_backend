@@ -23,7 +23,14 @@ export const createTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
-    const body = createTaskSchema.parse(req.body);
+    const body = createTaskSchema.parse(req.body) as { 
+      title: string; 
+      description?: string; 
+      priority: string; 
+      status: string; 
+      assignedTo?: string; 
+      dueDate?: string; 
+    };
     const projectId = projectIdSchema.parse(req.params.projectId);
     const workspaceId = workspaceIdSchema.parse(req.params.workspaceId);
 
@@ -48,7 +55,14 @@ export const updateTaskController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
-    const body = updateTaskSchema.parse(req.body);
+    const body = updateTaskSchema.parse(req.body) as { 
+      title: string; 
+      description?: string; 
+      priority: string; 
+      status: string; 
+      assignedTo?: string; 
+      dueDate?: string; 
+    };
 
     const taskId = taskIdSchema.parse(req.params.id);
     const projectId = projectIdSchema.parse(req.params.projectId);

@@ -36,15 +36,21 @@ if (config.NODE_ENV === "production") {
 console.log("CORS configuration - FRONTEND_ORIGIN:", config.FRONTEND_ORIGIN);
 app.use(
   cors({
-    origin: config.FRONTEND_ORIGIN,
+    origin: [
+      config.FRONTEND_ORIGIN,
+      'https://team-hubb.vercel.app',
+      'http://localhost:3000'
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
 
 // Session configuration - different for production vs development
 if (config.NODE_ENV === "production") {
   console.log("Using PRODUCTION session configuration");
-  // Production session config for Render.com
+  // Production session config for Render.com with Vercel frontend
   app.use(
     session({
       name: "session",
@@ -52,7 +58,7 @@ if (config.NODE_ENV === "production") {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: true,         // ✅ MUST be true in production (HTTPS)
-      sameSite: "lax",     // Try "lax" instead of "none" first
+      sameSite: "none",     // ✅ Required for cross-origin cookies (Vercel -> Render)
     })
   );
 } else {
@@ -73,7 +79,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Debug middleware to log session info
-app.use((req, res, next) => {
+app.use((req: any, res: any, next: any) => {
   console.log('=== Request Debug ===');
   console.log('URL:', req.url);
   console.log('Method:', req.method);
@@ -103,7 +109,7 @@ app.get(
 );
 
 // Debug endpoint to test session
-app.get('/debug/session', (req, res) => {
+app.get('/debug/session', (req: any, res: any) => {
   console.log('=== DEBUG SESSION ENDPOINT ===');
   console.log('Session ID:', req.session?.id);
   console.log('Session data:', req.session);

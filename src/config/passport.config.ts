@@ -21,7 +21,7 @@ passport.use(
       scope: ["profile", "email"],
       passReqToCallback: true,
     },
-    async (req: Request, accessToken, refreshToken, profile, done) => {
+    async (req: Request, accessToken: any, refreshToken: any, profile: any, done: any) => {
       try {
         const { email, sub: googleId, picture } = profile._json;
         console.log(profile, "profile");
@@ -52,7 +52,7 @@ passport.use(
       passwordField: "password",
       session: true,
     },
-    async (email, password, done) => {
+    async (email: any, password: any, done: any) => {
       try {
         const user = await verifyUserService({ email, password });
         return done(null, user);
@@ -63,13 +63,13 @@ passport.use(
   )
 );
 
-passport.serializeUser((user: any, done) => {
+passport.serializeUser((user: any, done: any) => {
   console.log("Passport serializeUser - user ID:", user._id);
   // Store only the user ID in the session
   done(null, user._id);
 });
 
-passport.deserializeUser(async (id: string, done) => {
+passport.deserializeUser(async (id: string, done: any) => {
   try {
     console.log("Passport deserializeUser - id:", id);
     // Fetch the user from the database using the stored ID
