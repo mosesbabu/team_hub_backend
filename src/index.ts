@@ -62,6 +62,7 @@ if (config.NODE_ENV === "production") {
       sameSite: "none",     // ✅ Required for cross-origin cookies (Vercel -> Render)
       domain: undefined,    // ✅ Let browser handle domain
       path: "/",            // ✅ Set explicit path
+      overwrite: true,      // ✅ Allow overwriting existing cookies
     })
   );
 } else {
@@ -76,6 +77,7 @@ if (config.NODE_ENV === "production") {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
+      overwrite: true,
     })
   );
 }
