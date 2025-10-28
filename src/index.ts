@@ -27,6 +27,26 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+// CORS should be configured before session middleware
+app.use(
+  cors({
+    origin: config.FRONTEND_ORIGIN,
+    credentials: true,
+  })
+);
+
+app.use(
+  session({
+    name: "session",
+    keys: [config.SESSION_SECRET],
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: config.NODE_ENV === "production",
+    httpOnly: true,
+    sameSite: "lax",
+  })
+);
+//for production use
+/*
 app.set("trust proxy", 1); // ✅ Required when behind a proxy (like Render)
 
 app.use(
@@ -39,16 +59,9 @@ app.use(
     sameSite: "none",     // ✅ Required for cross-origin cookies
   })
 );
-
+*/
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(
-  cors({
-    origin: config.FRONTEND_ORIGIN,
-    credentials: true,
-  })
-);
 
 app.get(
   `/`,
