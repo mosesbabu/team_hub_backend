@@ -33,6 +33,7 @@ if (config.NODE_ENV === "production") {
 }
 
 // CORS should be configured before session middleware
+console.log("CORS configuration - FRONTEND_ORIGIN:", config.FRONTEND_ORIGIN);
 app.use(
   cors({
     origin: config.FRONTEND_ORIGIN,
@@ -42,6 +43,7 @@ app.use(
 
 // Session configuration - different for production vs development
 if (config.NODE_ENV === "production") {
+  console.log("Using PRODUCTION session configuration");
   // Production session config for Render.com
   app.use(
     session({
@@ -54,6 +56,7 @@ if (config.NODE_ENV === "production") {
     })
   );
 } else {
+  console.log("Using DEVELOPMENT session configuration");
   // Development session config
   app.use(
     session({
@@ -68,6 +71,23 @@ if (config.NODE_ENV === "production") {
 }
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Debug middleware to log session info
+app.use((req, res, next) => {
+  console.log('=== Request Debug ===');
+  console.log('URL:', req.url);
+  console.log('Method:', req.method);
+  console.log('Session ID:', req.session?.id);
+  console.log('Session data:', req.session);
+  console.log('User:', req.user);
+  console.log('Headers:', {
+    cookie: req.headers.cookie,
+    origin: req.headers.origin,
+    referer: req.headers.referer
+  });
+  console.log('===================');
+  next();
+});
 
 app.get(
   `/`,
