@@ -70,36 +70,25 @@ export const loginController = asyncHandler(
             console.log("Generated new session ID:", req.session.id);
           }
 
-          // Force session to be saved
-          req.session.save((err: any) => {
-            if (err) {
-              console.error("Session save error:", err);
-              return next(err);
-            }
+          // Set the session cookie manually with proper configuration
+          const sessionCookieName = 'session';
+          const sessionCookieValue = req.session?.id;
+          
+          res.cookie(sessionCookieName, sessionCookieValue, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            path: '/',
+            domain: undefined // Let browser handle domain
+          });
 
-            console.log("Session saved - session ID:", req.session?.id);
-            console.log("Session saved - session data:", req.session);
-            
-            // Set the session cookie manually with proper configuration
-            const sessionCookieName = 'session';
-            const sessionCookieValue = req.session?.id;
-            
-            res.cookie(sessionCookieName, sessionCookieValue, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
-              sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-              maxAge: 24 * 60 * 60 * 1000, // 24 hours
-              path: '/',
-              domain: undefined // Let browser handle domain
-            });
+          console.log("Set cookie:", sessionCookieName, "=", sessionCookieValue);
+          console.log("Login successful - response headers:", res.getHeaders());
 
-            console.log("Set cookie:", sessionCookieName, "=", sessionCookieValue);
-            console.log("Login successful - response headers:", res.getHeaders());
-
-            return res.status(HTTPSTATUS.OK).json({
-              message: "Logged in successfully",
-              user,
-            });
+          return res.status(HTTPSTATUS.OK).json({
+            message: "Logged in successfully",
+            user,
           });
         });
       }
