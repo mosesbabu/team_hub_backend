@@ -9,7 +9,7 @@
     "build": "tsc && cp ./package.json ./dist",
     "start": "node dist/index.js",
     "ts.check": "tsc --project tsconfig.json",
-    "add :build":"git add dist"
+    "add :build": "git add dist"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.17.0",
     "mongoose": "^8.9.2",
     "passport": "^0.5.3",
@@ -35,6 +36,7 @@
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.97",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",

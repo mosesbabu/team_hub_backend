@@ -5,6 +5,7 @@ import { registerSchema } from "../validation/auth.validation";
 import { HTTPSTATUS } from "../config/http.config";
 import { registerUserService } from "../services/auth.service";
 import passport from "passport";
+import jwt, { SignOptions } from "jsonwebtoken";
 
 export const googleLoginCallback = asyncHandler(
   async (req: Request, res: Response) => {
@@ -61,12 +62,20 @@ export const loginController = asyncHandler(
           }
 
           console.log("Login successful - user:", user);
-          console.log("Login successful - session ID:", req.session?.id);
-          console.log("Login successful - session data:", req.session);
+          console.log("Login successful - issuing JWT for user ID:", (user as any)._id);
+
+          const token = jwt.sign(
+            { _id: (user as any)._id },
+            config.SESSION_SECRET,
+            {
+              expiresIn: (config.SESSION_EXPIRES_IN || "1d") as SignOptions["expiresIn"],
+            }
+          );
 
           return res.status(HTTPSTATUS.OK).json({
             message: "Logged in successfully",
             user,
+            token,
           });
         });
       }
