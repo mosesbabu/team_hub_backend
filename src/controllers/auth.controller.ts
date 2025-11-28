@@ -63,35 +63,6 @@ export const loginController = asyncHandler(
           console.log("Login successful - user:", user);
           console.log("Login successful - session ID:", req.session?.id);
           console.log("Login successful - session data:", req.session);
-          
-          // Generate a unique session ID if not present
-          if (!req.session?.id) {
-            req.session.id = 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-            console.log("Generated new session ID:", req.session.id);
-          }
-
-          // Try multiple approaches to set the cookie
-          const sessionCookieName = 'session';
-          const sessionCookieValue = req.session?.id;
-          
-          // Approach 1: Use res.cookie with explicit settings
-          res.cookie(sessionCookieName, sessionCookieValue, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
-            path: '/',
-            domain: undefined, // Let browser handle domain
-            overwrite: true
-          });
-
-          // Approach 2: Also try setting it via session middleware
-          if (req.session) {
-            req.session.sessionId = sessionCookieValue;
-          }
-
-          console.log("Set cookie:", sessionCookieName, "=", sessionCookieValue);
-          console.log("Login successful - response headers:", res.getHeaders());
 
           return res.status(HTTPSTATUS.OK).json({
             message: "Logged in successfully",
